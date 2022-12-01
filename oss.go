@@ -245,47 +245,9 @@ func (m *Mixer) Controls() (int, error) {
 
 // SetVolume sets the volume for a given mixer control.
 func (m *Mixer) SetVolume(control, leftVol, rightVol int) (int, int, error) {
-	var req int
-	switch control {
-	case SoundMixerVolume:
-		req = soundMixerWriteVolume
-	case SoundMixerBass:
-		req = soundMixerWriteBass
-	case SoundMixerTreble:
-		req = soundMixerWriteTreble
-	case SoundMixerSynth:
-		req = soundMixerWriteSynth
-	case SoundMixerPcm:
-		req = soundMixerWritePcm
-	case SoundMixerSpeaker:
-		req = soundMixerWriteSpeaker
-	case SoundMixerLine:
-		req = soundMixerWriteLine
-	case SoundMixerMic:
-		req = soundMixerWriteMic
-	case SoundMixerCd:
-		req = soundMixerWriteCd
-	case SoundMixerImix:
-		req = soundMixerWriteImix
-	case SoundMixerAltpcm:
-		req = soundMixerWriteAltpcm
-	case SoundMixerReclev:
-		req = soundMixerWriteReclev
-	case SoundMixerIgain:
-		req = soundMixerWriteIgain
-	case SoundMixerOgain:
-		req = soundMixerWriteOgain
-	case SoundMixerLine1:
-		req = soundMixerWriteLine1
-	case SoundMixerLine2:
-		req = soundMixerWriteLine2
-	case SoundMixerLine3:
-		req = soundMixerWriteLine3
-	}
-
 	volume := (rightVol << 8) | leftVol
 
-	value, err := ioctl(m.file.Fd(), req, volume)
+	value, err := ioctl(m.file.Fd(), soundMixerWrite(control), volume)
 
 	left := value & 0xff
 	right := (value & 0xff00) >> 8
@@ -295,45 +257,7 @@ func (m *Mixer) SetVolume(control, leftVol, rightVol int) (int, int, error) {
 
 // Volume returns the volume of a given mixer control.
 func (m *Mixer) Volume(control int) (int, int, error) {
-	var req int
-	switch control {
-	case SoundMixerVolume:
-		req = soundMixerReadVolume
-	case SoundMixerBass:
-		req = soundMixerReadBass
-	case SoundMixerTreble:
-		req = soundMixerReadTreble
-	case SoundMixerSynth:
-		req = soundMixerReadSynth
-	case SoundMixerPcm:
-		req = soundMixerReadPcm
-	case SoundMixerSpeaker:
-		req = soundMixerReadSpeaker
-	case SoundMixerLine:
-		req = soundMixerReadLine
-	case SoundMixerMic:
-		req = soundMixerReadMic
-	case SoundMixerCd:
-		req = soundMixerReadCd
-	case SoundMixerImix:
-		req = soundMixerReadImix
-	case SoundMixerAltpcm:
-		req = soundMixerReadAltpcm
-	case SoundMixerReclev:
-		req = soundMixerReadReclev
-	case SoundMixerIgain:
-		req = soundMixerReadIgain
-	case SoundMixerOgain:
-		req = soundMixerReadOgain
-	case SoundMixerLine1:
-		req = soundMixerReadLine1
-	case SoundMixerLine2:
-		req = soundMixerReadLine2
-	case SoundMixerLine3:
-		req = soundMixerReadLine3
-	}
-
-	value, err := ioctl(m.file.Fd(), req, 0)
+	value, err := ioctl(m.file.Fd(), soundMixerRead(control), 0)
 
 	left := value & 0xff
 	right := (value & 0xff00) >> 8
