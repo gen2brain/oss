@@ -26,7 +26,7 @@ func TestAudio(t *testing.T) {
 		t.Error(err)
 	}
 
-	if caps&oss.DspCapTrigger == 0 {
+	if caps&int(oss.DspCapTrigger) == 0 {
 		t.Errorf("Controls: no trigger cap")
 	}
 
@@ -35,7 +35,7 @@ func TestAudio(t *testing.T) {
 		t.Error(err)
 	}
 
-	if formats&oss.AfmtS16Le == 0 {
+	if formats&int(oss.AfmtS16Le) == 0 {
 		t.Errorf("Formats: no S16Le format")
 	}
 

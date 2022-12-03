@@ -75,10 +75,10 @@ func (a *Audio) Nonblock() (int, error) {
 }
 
 // Format sets the audio format.
-func (a *Audio) Format(format int) (int, error) {
-	value, err := ioctl(a.file.Fd(), sndctlDspSetfmt, format)
+func (a *Audio) Format(format Format) (Format, error) {
+	value, err := ioctl(a.file.Fd(), sndctlDspSetfmt, int(format))
 
-	return value, err
+	return Format(value), err
 }
 
 // Samplerate sets the audio samplerate (speed).
@@ -236,7 +236,7 @@ func (m *Mixer) Close() error {
 //
 // To determine if, for example, mixer supports a PCM control:
 //
-//	if controls & (1 << oss.SoundMixerPcm) != 0 { // true
+//	if controls & (1 << int(oss.SoundMixerPcm)) != 0 { // true
 func (m *Mixer) Controls() (int, error) {
 	value, err := ioctl(m.file.Fd(), soundMixerReadDevmask, 0)
 
@@ -244,7 +244,7 @@ func (m *Mixer) Controls() (int, error) {
 }
 
 // SetVolume sets the volume for a given mixer control.
-func (m *Mixer) SetVolume(control, leftVol, rightVol int) (int, int, error) {
+func (m *Mixer) SetVolume(control Control, leftVol, rightVol int) (int, int, error) {
 	volume := (rightVol << 8) | leftVol
 
 	value, err := ioctl(m.file.Fd(), soundMixerWrite(control), volume)
@@ -256,7 +256,7 @@ func (m *Mixer) SetVolume(control, leftVol, rightVol int) (int, int, error) {
 }
 
 // Volume returns the volume of a given mixer control.
-func (m *Mixer) Volume(control int) (int, int, error) {
+func (m *Mixer) Volume(control Control) (int, int, error) {
 	value, err := ioctl(m.file.Fd(), soundMixerRead(control), 0)
 
 	left := value & 0xff
