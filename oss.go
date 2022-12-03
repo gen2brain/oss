@@ -55,11 +55,39 @@ func (a *Audio) Caps() (int, error) {
 	return value, err
 }
 
+// IsCap checks if capability is supported.
+func (a *Audio) IsCap(c Cap) (bool, error) {
+	caps, err := a.Caps()
+	if err != nil {
+		return false, err
+	}
+
+	if caps&int(c) != 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
 // Formats returns the supported formats mask.
 func (a *Audio) Formats() (int, error) {
 	value, err := ioctl(a.file.Fd(), sndctlDspGetfmts, 0)
 
 	return value, err
+}
+
+// IsFormat checks if format is supported.
+func (a *Audio) IsFormat(format Format) (bool, error) {
+	formats, err := a.Formats()
+	if err != nil {
+		return false, err
+	}
+
+	if formats&int(format) != 0 {
+		return true, nil
+	}
+
+	return false, nil
 }
 
 // Playing checks if audio is playing.
@@ -241,6 +269,20 @@ func (m *Mixer) Controls() (int, error) {
 	value, err := ioctl(m.file.Fd(), soundMixerReadDevmask, 0)
 
 	return value, err
+}
+
+// IsControl checks if control exists.
+func (m *Mixer) IsControl(control Control) (bool, error) {
+	controls, err := m.Controls()
+	if err != nil {
+		return false, err
+	}
+
+	if controls&(1<<int(control)) != 0 {
+		return true, nil
+	}
+
+	return false, nil
 }
 
 // SetVolume sets the volume for a given mixer control.

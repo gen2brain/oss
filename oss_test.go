@@ -30,13 +30,31 @@ func TestAudio(t *testing.T) {
 		t.Errorf("Controls: no trigger cap")
 	}
 
+	ok, err := dev.IsCap(oss.DspCapTrigger)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !ok {
+		t.Errorf("IsCap: got %v, want %v", ok, true)
+	}
+
 	formats, err := dev.Formats()
 	if err != nil {
 		t.Error(err)
 	}
 
 	if formats&int(oss.AfmtS16Le) == 0 {
-		t.Errorf("Formats: no S16Le format")
+		t.Errorf("Formats: no %s format", oss.AfmtS16Le)
+	}
+
+	ok, err = dev.IsFormat(oss.AfmtS16Le)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !ok {
+		t.Errorf("IsFormat: got %v, want %v", ok, true)
 	}
 
 	channels, err := dev.Channels(2)
@@ -149,6 +167,15 @@ func TestMixer(t *testing.T) {
 
 	if caps&(1<<oss.SoundMixerVolume) == 0 {
 		t.Errorf("Controls: no Master control")
+	}
+
+	ok, err := mix.IsControl(oss.SoundMixerVolume)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !ok {
+		t.Errorf("IsControl: got %v, want %v", ok, true)
 	}
 
 	reqLeft, reqRight := 50, 50
