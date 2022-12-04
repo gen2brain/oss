@@ -1,4 +1,4 @@
-//go:build mips || mips64 || mips64le || mipsle || ppc64 || ppc64le
+//go:build freebsd || (linux && (mips || mips64 || mips64le || mipsle || ppc64 || ppc64le))
 
 package oss
 
